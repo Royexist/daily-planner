@@ -3,15 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的全量任务看板</title>
+    <title>我的全量任务看板 + 历史回顾</title>
     <style>
-        :root { --bg: #f5f7fa; --card: #ffffff; --primary: #2d3436; --accent: #0984e3; --danger: #d63031; --morning-c: #ff7675; --afternoon-c: #74b9ff; --evening-c: #a29bfe; }
+        :root { --bg: #f5f7fa; --card: #ffffff; --primary: #2d3436; --accent: #0984e3; --success: #00b894; --danger: #d63031; --morning-c: #ff7675; --afternoon-c: #74b9ff; --evening-c: #a29bfe; }
         body { font-family: -apple-system, "SF Pro Text", sans-serif; background: var(--bg); color: var(--primary); margin: 0; padding: 20px; }
         .container { max-width: 600px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
-        .header { margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* 按钮样式 */
+        .btn { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-weight: bold; transition: opacity 0.2s; font-size: 13px; }
+        .btn-add { background: var(--accent); color: white; }
+        .btn-history { background: #636e72; color: white; }
+        .btn-archive { background: var(--success); color: white; width: 100%; margin-top: 15px; padding: 12px; }
+
         .add-box { display: flex; gap: 8px; margin-bottom: 30px; background: #f1f2f6; padding: 12px; border-radius: 12px; }
         input, select { border: 1px solid #ddd; padding: 10px; border-radius: 8px; flex: 1; }
-        .btn-add { background: var(--accent); color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
         
         .section { margin-bottom: 30px; }
         .section-title { font-size: 14px; font-weight: 800; color: #636e72; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; }
@@ -20,21 +26,26 @@
         #afternoon .section-title::before { background: var(--afternoon-c); }
         #evening .section-title::before { background: var(--evening-c); }
 
-        .task-item { display: flex; align-items: center; padding: 12px; background: #fff; border: 1px solid #f1f2f6; border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; }
-        .task-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .task-item { display: flex; align-items: center; padding: 12px; background: #fff; border: 1px solid #f1f2f6; border-radius: 10px; margin-bottom: 8px; }
         .task-item.completed span { text-decoration: line-through; color: #b2bec3; }
         .task-text { flex: 1; margin: 0 12px; cursor: pointer; font-size: 15px; }
-        .btn-del { color: #fab1a0; background: none; border: none; cursor: pointer; font-size: 12px; }
-        .btn-del:hover { color: var(--danger); }
 
-        textarea { width: 100%; height: 120px; padding: 15px; border: 1px solid #f1f2f6; border-radius: 12px; font-family: inherit; box-sizing: border-box; background: #fbfbfb; }
+        textarea { width: 100%; height: 100px; padding: 15px; border: 1px solid #f1f2f6; border-radius: 12px; font-family: inherit; box-sizing: border-box; background: #fbfbfb; }
+
+        /* 历史记录弹窗 */
+        #historyModal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; overflow-y: auto; }
+        .modal-content { background: white; max-width: 500px; margin: 50px auto; padding: 25px; border-radius: 15px; }
+        .history-card { border-left: 4px solid var(--accent); padding-left: 15px; margin-bottom: 20px; background: #f9f9f9; padding: 10px; border-radius: 4px; }
+        .history-date { font-weight: bold; color: var(--accent); margin-bottom: 5px; }
+        .close-btn { float: right; cursor: pointer; font-weight: bold; }
     </style>
 </head>
 <body>
 
 <div class="container">
     <div class="header">
-        <h2 id="dateDisplay">2026-03-05</h2>
+        <h2 id="dateDisplay">加载中...</h2>
+        <button class="btn btn-history" onclick="toggleHistory()">📅 历史回顾</button>
     </div>
 
     <div class="add-box">
@@ -54,11 +65,19 @@
     <div class="section">
         <div class="section-title">今日复盘与心得</div>
         <textarea id="reflection" placeholder="记下今天的闪光点或偏差..." oninput="saveData()"></textarea>
+        <button class="btn btn-archive" onclick="archiveDay()">✅ 完成今日并存档</button>
+    </div>
+</div>
+
+<div id="historyModal">
+    <div class="modal-content">
+        <span class="close-btn" onclick="toggleHistory()">✕ 关闭</span>
+        <h3>历史记录 Retrospect</h3>
+        <div id="historyList">暂无历史记录</div>
     </div>
 </div>
 
 <script>
-    // 默认初始任务清单
     const defaultTasks = [
         { id: 1, text: "P1 | 完善大纲/小说一章", period: "morning", completed: false },
         { id: 2, text: "P2 | 英语单词 (30min)", period: "morning", completed: false },
@@ -72,19 +91,21 @@
     let state = {
         date: new Date().toLocaleDateString(),
         tasks: defaultTasks,
-        reflection: ""
+        reflection: "",
+        history: [] // 历史存档
     };
 
     function init() {
-        const saved = localStorage.getItem('full_schedule_data');
+        const saved = localStorage.getItem('advanced_planner_v1');
         if (saved) {
             const parsed = JSON.parse(saved);
-            // 如果日期相同，加载数据；如果日期不同（第二天），重置勾选状态但保留任务结构
-            if (parsed.date === state.date) {
-                state = parsed;
+            // 保持跨日重置逻辑，但保留 history
+            if (parsed.date !== state.date) {
+                state.history = parsed.history || [];
+                state.tasks = (parsed.tasks || defaultTasks).map(t => ({ ...t, completed: false }));
+                state.reflection = "";
             } else {
-                state.tasks = parsed.tasks.map(t => ({ ...t, completed: false }));
-                state.reflection = ""; 
+                state = parsed;
             }
         }
         document.getElementById('dateDisplay').innerText = state.date;
@@ -97,14 +118,13 @@
         Object.keys(pMap).forEach(p => {
             const el = document.getElementById(p);
             el.innerHTML = `<div class="section-title">${pMap[p]}</div>`;
-            
             state.tasks.filter(t => t.period === p).forEach(task => {
                 const div = document.createElement('div');
                 div.className = `task-item ${task.completed ? 'completed' : ''}`;
                 div.innerHTML = `
                     <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})">
                     <span class="task-text" onclick="editTask(${task.id})">${task.text}</span>
-                    <button class="btn-del" onclick="deleteTask(${task.id})">删除</button>
+                    <button style="color:#ccc;background:none;border:none;cursor:pointer" onclick="deleteTask(${task.id})">×</button>
                 `;
                 el.appendChild(div);
             });
@@ -112,41 +132,59 @@
         saveData();
     }
 
+    // 存档功能
+    function archiveDay() {
+        if (!confirm("确定要存档今日记录吗？这会将当前状态存入历史并清空心得。")) return;
+        const doneCount = state.tasks.filter(t => t.completed).length;
+        const totalCount = state.tasks.length;
+        
+        const record = {
+            date: state.date,
+            score: `${doneCount}/${totalCount}`,
+            reflection: state.reflection || "无心得记录"
+        };
+        
+        state.history.unshift(record); // 新记录插到最前面
+        state.reflection = "";
+        document.getElementById('reflection').value = "";
+        alert("存档成功！可以在历史回顾中查看。");
+        render();
+    }
+
+    function toggleHistory() {
+        const modal = document.getElementById('historyModal');
+        modal.style.display = (modal.style.display === 'block') ? 'none' : 'block';
+        if(modal.style.display === 'block') renderHistory();
+    }
+
+    function renderHistory() {
+        const list = document.getElementById('historyList');
+        if (state.history.length === 0) {
+            list.innerHTML = "目前还没有存档记录。";
+            return;
+        }
+        list.innerHTML = state.history.map(h => `
+            <div class="history-card">
+                <div class="history-date">${h.date} (完成率: ${h.score})</div>
+                <div style="font-size:14px; color:#555;">${h.reflection}</div>
+            </div>
+        `).join('');
+    }
+
+    /* 基础功能函数 */
     function addTask() {
         const input = document.getElementById('taskInput');
         if (!input.value) return;
-        state.tasks.push({
-            id: Date.now(),
-            text: input.value,
-            period: document.getElementById('periodInput').value,
-            completed: false
-        });
-        input.value = '';
-        render();
+        state.tasks.push({ id: Date.now(), text: input.value, period: document.getElementById('periodInput').value, completed: false });
+        input.value = ''; render();
     }
-
-    function toggleTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        if(task) task.completed = !task.completed;
-        render();
-    }
-
-    function deleteTask(id) {
-        state.tasks = state.tasks.filter(t => t.id !== id);
-        render();
-    }
-
-    function editTask(id) {
-        const task = state.tasks.find(t => t.id === id);
-        const next = prompt("修改任务:", task.text);
-        if (next) { task.text = next; render(); }
-    }
-
-    function saveData() {
+    function toggleTask(id) { const t = state.tasks.find(t => t.id === id); if(t) t.completed = !t.completed; render(); }
+    function deleteTask(id) { state.tasks = state.tasks.filter(t => t.id !== id); render(); }
+    function editTask(id) { const t = state.tasks.find(t => t.id === id); const n = prompt("修改:", t.text); if(n) { t.text = n; render(); } }
+    function saveData() { 
         state.reflection = document.getElementById('reflection').value;
-        localStorage.setItem('full_schedule_data', JSON.stringify(state));
+        localStorage.setItem('advanced_planner_v1', JSON.stringify(state)); 
     }
-
     init();
 </script>
 </body>
