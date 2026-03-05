@@ -1,169 +1,153 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-<html>
+<!DOCTYPE html>
+<html lang="zh-CN">
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-  <meta http-equiv="Content-Style-Type" content="text/css">
-  <title></title>
-  <meta name="Generator" content="Cocoa HTML Writer">
-  <meta name="CocoaVersion" content="2575.6">
-  <style type="text/css">
-    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
-    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的全量任务看板</title>
+    <style>
+        :root { --bg: #f5f7fa; --card: #ffffff; --primary: #2d3436; --accent: #0984e3; --danger: #d63031; --morning-c: #ff7675; --afternoon-c: #74b9ff; --evening-c: #a29bfe; }
+        body { font-family: -apple-system, "SF Pro Text", sans-serif; background: var(--bg); color: var(--primary); margin: 0; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }
+        .header { margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        .add-box { display: flex; gap: 8px; margin-bottom: 30px; background: #f1f2f6; padding: 12px; border-radius: 12px; }
+        input, select { border: 1px solid #ddd; padding: 10px; border-radius: 8px; flex: 1; }
+        .btn-add { background: var(--accent); color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }
+        
+        .section { margin-bottom: 30px; }
+        .section-title { font-size: 14px; font-weight: 800; color: #636e72; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; }
+        .section-title::before { content: ""; display: inline-block; width: 4px; height: 16px; margin-right: 8px; border-radius: 2px; }
+        #morning .section-title::before { background: var(--morning-c); }
+        #afternoon .section-title::before { background: var(--afternoon-c); }
+        #evening .section-title::before { background: var(--evening-c); }
+
+        .task-item { display: flex; align-items: center; padding: 12px; background: #fff; border: 1px solid #f1f2f6; border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; }
+        .task-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+        .task-item.completed span { text-decoration: line-through; color: #b2bec3; }
+        .task-text { flex: 1; margin: 0 12px; cursor: pointer; font-size: 15px; }
+        .btn-del { color: #fab1a0; background: none; border: none; cursor: pointer; font-size: 12px; }
+        .btn-del:hover { color: var(--danger); }
+
+        textarea { width: 100%; height: 120px; padding: 15px; border: 1px solid #f1f2f6; border-radius: 12px; font-family: inherit; box-sizing: border-box; background: #fbfbfb; }
+    </style>
 </head>
 <body>
-<p class="p1">&lt;!DOCTYPE html&gt;</p>
-<p class="p1">&lt;html lang="zh-CN"&gt;</p>
-<p class="p1">&lt;head&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;我的全量任务看板&lt;/title&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>:root { --bg: #f5f7fa; --card: #ffffff; --primary: #2d3436; --accent: #0984e3; --danger: #d63031; --morning-c: #ff7675; --afternoon-c: #74b9ff; --evening-c: #a29bfe; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>body { font-family: -apple-system, "SF Pro Text", sans-serif; background: var(--bg); color: var(--primary); margin: 0; padding: 20px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.container { max-width: 600px; margin: 0 auto; background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.05); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.header { margin-bottom: 25px; border-bottom: 2px solid #eee; padding-bottom: 10px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.add-box { display: flex; gap: 8px; margin-bottom: 30px; background: #f1f2f6; padding: 12px; border-radius: 12px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>input, select { border: 1px solid #ddd; padding: 10px; border-radius: 8px; flex: 1; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-add { background: var(--accent); color: white; border: none; padding: 0 20px; border-radius: 8px; cursor: pointer; font-weight: bold; }</p>
-<p class="p2"><span class="Apple-converted-space">        </span></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.section { margin-bottom: 30px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.section-title { font-size: 14px; font-weight: 800; color: #636e72; text-transform: uppercase; margin-bottom: 15px; display: flex; align-items: center; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.section-title::before { content: ""; display: inline-block; width: 4px; height: 16px; margin-right: 8px; border-radius: 2px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#morning .section-title::before { background: var(--morning-c); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#afternoon .section-title::before { background: var(--afternoon-c); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>#evening .section-title::before { background: var(--evening-c); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-item { display: flex; align-items: center; padding: 12px; background: #fff; border: 1px solid #f1f2f6; border-radius: 10px; margin-bottom: 8px; transition: all 0.2s; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.05); }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-item.completed span { text-decoration: line-through; color: #b2bec3; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.task-text { flex: 1; margin: 0 12px; cursor: pointer; font-size: 15px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-del { color: #fab1a0; background: none; border: none; cursor: pointer; font-size: 12px; }</p>
-<p class="p1"><span class="Apple-converted-space">        </span>.btn-del:hover { color: var(--danger); }</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">        </span>textarea { width: 100%; height: 120px; padding: 15px; border: 1px solid #f1f2f6; border-radius: 12px; font-family: inherit; box-sizing: border-box; background: #fbfbfb; }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
-<p class="p1">&lt;/head&gt;</p>
-<p class="p1">&lt;body&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;div class="container"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="header"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2 id="dateDisplay"&gt;2026-03-05&lt;/h2&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="add-box"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="text" id="taskInput" placeholder="添加新任务..."&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;select id="periodInput" style="flex: 0 0 80px;"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="morning"&gt;早上&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="afternoon"&gt;下午&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>&lt;option value="evening"&gt;晚上&lt;/option&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;/select&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;button class="btn-add" onclick="addTask()"&gt;+&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="morning" class="section"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="afternoon" class="section"&gt;&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="evening" class="section"&gt;&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="section"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;div class="section-title"&gt;今日复盘与心得&lt;/div&gt;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="reflection" placeholder="记下今天的闪光点或偏差..." oninput="saveData()"&gt;&lt;/textarea&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
-<p class="p1">&lt;/div&gt;</p>
-<p class="p2"><br></p>
-<p class="p1">&lt;script&gt;</p>
-<p class="p1"><span class="Apple-converted-space">    </span>// 默认初始任务清单</p>
-<p class="p1"><span class="Apple-converted-space">    </span>const defaultTasks = [</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 1, text: "P1 | 完善大纲/小说一章", period: "morning", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 2, text: "P2 | 英语单词 (30min)", period: "morning", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 3, text: "P3 | 外文阅读", period: "morning", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 4, text: "P1 | 法考视频", period: "afternoon", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 5, text: "P2 | 专业教材", period: "afternoon", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 6, text: "复盘今日/复习以前/Rest", period: "evening", completed: false },</p>
-<p class="p1"><span class="Apple-converted-space">        </span>{ id: 7, text: "睡前课外书", period: "evening", completed: false }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>];</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>let state = {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>date: new Date().toLocaleDateString(),</p>
-<p class="p1"><span class="Apple-converted-space">        </span>tasks: defaultTasks,</p>
-<p class="p1"><span class="Apple-converted-space">        </span>reflection: ""</p>
-<p class="p1"><span class="Apple-converted-space">    </span>};</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function init() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const saved = localStorage.getItem('full_schedule_data');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (saved) {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const parsed = JSON.parse(saved);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>// 如果日期相同，加载数据；如果日期不同（第二天），重置勾选状态但保留任务结构</p>
-<p class="p1"><span class="Apple-converted-space">            </span>if (parsed.date === state.date) {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>state = parsed;</p>
-<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>state.tasks = parsed.tasks.map(t =&gt; ({ ...t, completed: false }));</p>
-<p class="p1"><span class="Apple-converted-space">                </span>state.reflection = "";<span class="Apple-converted-space"> </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>}</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('dateDisplay').innerText = state.date;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>document.getElementById('reflection').value = state.reflection;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function render() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const pMap = { morning: '早上', afternoon: '下午', evening: '晚上' };</p>
-<p class="p1"><span class="Apple-converted-space">        </span>Object.keys(pMap).forEach(p =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">            </span>const el = document.getElementById(p);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>el.innerHTML = `&lt;div class="section-title"&gt;${pMap[p]}&lt;/div&gt;`;</p>
-<p class="p2"><span class="Apple-converted-space">            </span></p>
-<p class="p1"><span class="Apple-converted-space">            </span>state.tasks.filter(t =&gt; t.period === p).forEach(task =&gt; {</p>
-<p class="p1"><span class="Apple-converted-space">                </span>const div = document.createElement('div');</p>
-<p class="p1"><span class="Apple-converted-space">                </span>div.className = `task-item ${task.completed ? 'completed' : ''}`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>div.innerHTML = `</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})"&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;span class="task-text" onclick="editTask(${task.id})"&gt;${task.text}&lt;/span&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                    </span>&lt;button class="btn-del" onclick="deleteTask(${task.id})"&gt;删除&lt;/button&gt;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>`;</p>
-<p class="p1"><span class="Apple-converted-space">                </span>el.appendChild(div);</p>
-<p class="p1"><span class="Apple-converted-space">            </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>saveData();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function addTask() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const input = document.getElementById('taskInput');</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (!input.value) return;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.tasks.push({</p>
-<p class="p1"><span class="Apple-converted-space">            </span>id: Date.now(),</p>
-<p class="p1"><span class="Apple-converted-space">            </span>text: input.value,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>period: document.getElementById('periodInput').value,</p>
-<p class="p1"><span class="Apple-converted-space">            </span>completed: false</p>
-<p class="p1"><span class="Apple-converted-space">        </span>});</p>
-<p class="p1"><span class="Apple-converted-space">        </span>input.value = '';</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function toggleTask(id) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const task = state.tasks.find(t =&gt; t.id === id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if(task) task.completed = !task.completed;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function deleteTask(id) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.tasks = state.tasks.filter(t =&gt; t.id !== id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>render();</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function editTask(id) {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const task = state.tasks.find(t =&gt; t.id === id);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>const next = prompt("修改任务:", task.text);</p>
-<p class="p1"><span class="Apple-converted-space">        </span>if (next) { task.text = next; render(); }</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>function saveData() {</p>
-<p class="p1"><span class="Apple-converted-space">        </span>state.reflection = document.getElementById('reflection').value;</p>
-<p class="p1"><span class="Apple-converted-space">        </span>localStorage.setItem('full_schedule_data', JSON.stringify(state));</p>
-<p class="p1"><span class="Apple-converted-space">    </span>}</p>
-<p class="p2"><br></p>
-<p class="p1"><span class="Apple-converted-space">    </span>init();</p>
-<p class="p1">&lt;/script&gt;</p>
-<p class="p1">&lt;/body&gt;</p>
-<p class="p1">&lt;/html&gt;</p>
+
+<div class="container">
+    <div class="header">
+        <h2 id="dateDisplay">2026-03-05</h2>
+    </div>
+
+    <div class="add-box">
+        <input type="text" id="taskInput" placeholder="添加新任务...">
+        <select id="periodInput" style="flex: 0 0 80px;">
+            <option value="morning">早上</option>
+            <option value="afternoon">下午</option>
+            <option value="evening">晚上</option>
+        </select>
+        <button class="btn-add" onclick="addTask()">+</button>
+    </div>
+
+    <div id="morning" class="section"></div>
+    <div id="afternoon" class="section"></div>
+    <div id="evening" class="section"></div>
+
+    <div class="section">
+        <div class="section-title">今日复盘与心得</div>
+        <textarea id="reflection" placeholder="记下今天的闪光点或偏差..." oninput="saveData()"></textarea>
+    </div>
+</div>
+
+<script>
+    // 默认初始任务清单
+    const defaultTasks = [
+        { id: 1, text: "P1 | 完善大纲/小说一章", period: "morning", completed: false },
+        { id: 2, text: "P2 | 英语单词 (30min)", period: "morning", completed: false },
+        { id: 3, text: "P3 | 外文阅读", period: "morning", completed: false },
+        { id: 4, text: "P1 | 法考视频", period: "afternoon", completed: false },
+        { id: 5, text: "P2 | 专业教材", period: "afternoon", completed: false },
+        { id: 6, text: "复盘今日/复习以前/Rest", period: "evening", completed: false },
+        { id: 7, text: "睡前课外书", period: "evening", completed: false }
+    ];
+
+    let state = {
+        date: new Date().toLocaleDateString(),
+        tasks: defaultTasks,
+        reflection: ""
+    };
+
+    function init() {
+        const saved = localStorage.getItem('full_schedule_data');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            // 如果日期相同，加载数据；如果日期不同（第二天），重置勾选状态但保留任务结构
+            if (parsed.date === state.date) {
+                state = parsed;
+            } else {
+                state.tasks = parsed.tasks.map(t => ({ ...t, completed: false }));
+                state.reflection = ""; 
+            }
+        }
+        document.getElementById('dateDisplay').innerText = state.date;
+        document.getElementById('reflection').value = state.reflection;
+        render();
+    }
+
+    function render() {
+        const pMap = { morning: '早上', afternoon: '下午', evening: '晚上' };
+        Object.keys(pMap).forEach(p => {
+            const el = document.getElementById(p);
+            el.innerHTML = `<div class="section-title">${pMap[p]}</div>`;
+            
+            state.tasks.filter(t => t.period === p).forEach(task => {
+                const div = document.createElement('div');
+                div.className = `task-item ${task.completed ? 'completed' : ''}`;
+                div.innerHTML = `
+                    <input type="checkbox" ${task.completed ? 'checked' : ''} onclick="toggleTask(${task.id})">
+                    <span class="task-text" onclick="editTask(${task.id})">${task.text}</span>
+                    <button class="btn-del" onclick="deleteTask(${task.id})">删除</button>
+                `;
+                el.appendChild(div);
+            });
+        });
+        saveData();
+    }
+
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        if (!input.value) return;
+        state.tasks.push({
+            id: Date.now(),
+            text: input.value,
+            period: document.getElementById('periodInput').value,
+            completed: false
+        });
+        input.value = '';
+        render();
+    }
+
+    function toggleTask(id) {
+        const task = state.tasks.find(t => t.id === id);
+        if(task) task.completed = !task.completed;
+        render();
+    }
+
+    function deleteTask(id) {
+        state.tasks = state.tasks.filter(t => t.id !== id);
+        render();
+    }
+
+    function editTask(id) {
+        const task = state.tasks.find(t => t.id === id);
+        const next = prompt("修改任务:", task.text);
+        if (next) { task.text = next; render(); }
+    }
+
+    function saveData() {
+        state.reflection = document.getElementById('reflection').value;
+        localStorage.setItem('full_schedule_data', JSON.stringify(state));
+    }
+
+    init();
+</script>
 </body>
 </html>
